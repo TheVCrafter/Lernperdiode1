@@ -25,14 +25,28 @@ aber in der Eingabe klein.
 - [x] Die Phasen in den Code einbauen
 - [x] Eventuell weitere Sachen einbauen (z.B. eine Restart-/Beenden-Option innerhalb der Konsole beim Ende des Spiels)
 
-Heut habe ich es Geschafft, dass das Programm bei der Eingabe eines Buchstabens nicht mehr zwischen Gross und Kleinschreibung unterscheidet. Ausserdem habe ich mithilfe von Ascii Art
+Heute habe ich es Geschafft, dass das Programm bei der Eingabe eines Buchstabens nicht mehr zwischen Gross und Kleinschreibung unterscheidet. Ausserdem habe ich mithilfe von Ascii Art
 einen Hangman erstellt und diesen anschliessend in mein Spiel eingebaut. Auch die Restart/ Beenden option am Ende des Spiels konnte ich fertigstellen. Danach habe ich noch eine Start 
 funktion eingebaut und mit Hilfe von Ascii Art das Spiel besser Designt. Ich habe auch noch programmiert, dass das zu erratene Wort im Game Over Menü angezeigt wird. 
 Das Spiel ist eigentlich so gut wie fertig, trotzdem möchte ich in der Nächsten Stunde noch ein paar zusätzliche Sachen einbauen. Ich möchte zum Beispiel versuchen, auch Ton in das Spiel 
 einzufügen und ausserdem das Design noch verbessern.
 
 ## 13.9.2024
-- [ ] Ton in das Spiel einfügen
-- [ ] Design verbessern
-- [ ] eventuell auch noch weitere Funktionen einbauen
+- [x] Ton in das Spiel einfügen
+- [x] Design verbessern
+- [x] eventuell auch noch weitere Funktionen einbauen
 - [ ] Nach neuer Projektidee suchen
+
+Zu beginn hab ich heute recherchiert wie genau man töne mit der Konsole ausgeben kann und bin schnell auf die SoundPlayer funktion gestossen. Anschliessend habe ich im internet nach passenden 
+Tönen für mein Spiel gesucht. Ich wollte für das Spiel nur 8-Bit-Sounds verwenden. Ich brauchte eine Titelmusik, einen Ton welcher beim Start des Spieles abgspielt wird, einen Ton für korrekte 
+Antworten, einen für falsche Antworten, einen Ton welcher abgespielt wird wenn man das Wort errät und schliesslich noch einen Ton welcher abgespielt wird wenn der Hangman vervollständigt wird. 
+Auf www.pixabay.com wurde ich schliesslich fündig und konnte die Sounds kostenlos herunterladen. Anschliessend musste ich die Downloads vom MP3-Format ins WAV-Format konvertieren. 
+Dies habe ich Online mit www.cloudconvert.com gemacht. Dann habe ich die WAV-Dateien in den Debug Folder des Projektes verschoben und anschliessend im Code eingebaut. Dabei habe ich gemerkt, 
+dass die Konsole nur einen Sound zugleich abspielen kann, aber das war zum Glück nicht weiter tragisch. Als nächstes habe ich das Farbdesign des Spiels angepasst. Dies machte ich mit der 
+Console.Foregroundcolor-Methode. Nachdem ich so das Spiel relativ schön gestalten konnte, habe ich die Datei mit den deutschen Wörtern auch noch in den Debug-Folder verschoben und den Code 
+entsprechend umgebaut. Leider bin ich noch nicht dazu gekommen, nach einer neuen Projektidee zu suchen.
+
+## 20.9.2024
+- [ ] Jetztiges Projekt endgültig abschliessen
+- [ ] Neue Projektidee suchen
+
