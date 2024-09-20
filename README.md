@@ -47,6 +47,7 @@ Console.Foregroundcolor-Methode. Nachdem ich so das Spiel relativ schön gestalt
 entsprechend umgebaut. Leider bin ich noch nicht dazu gekommen, nach einer neuen Projektidee zu suchen.
 
 ## 20.9.2024
+- [ ] Die Funktion hinzufügen, dass bereits geratene Buchstaben nicht nochmals geraten werden können
 - [ ] Jetztiges Projekt endgültig abschliessen
 - [ ] Neue Projektidee suchen
 
