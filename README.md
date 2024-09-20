@@ -47,7 +47,18 @@ Console.Foregroundcolor-Methode. Nachdem ich so das Spiel relativ schön gestalt
 entsprechend umgebaut. Leider bin ich noch nicht dazu gekommen, nach einer neuen Projektidee zu suchen.
 
 ## 20.9.2024
-- [ ] Die Funktion hinzufügen, dass bereits geratene Buchstaben nicht nochmals geraten werden können
-- [ ] Jetztiges Projekt endgültig abschliessen
+- [x] Die Funktion hinzufügen, dass bereits geratene Buchstaben nicht nochmals geraten werden können
 - [ ] Neue Projektidee suchen
 
+Heute habe ich versucht zu verhindern, dass bereits geratene Buchstaben nicht nochmals geraten werden können. Nachdem ich den Code dazu geschrieben hatte, gab es beim Starten des Programms 
+ständig eine Fehler Meldung, weil mein Antivirus das Programm als Virus erkannte. Also habe ich eine neue Projektdatei erstellt und den ganzen Code dort hinein kopiert und es hat tatsächlich 
+funktioniert. Anschliessend habe ich noch versucht eine Funktion einzufügen, welche erkennt wann mehrere Buchstaben eingegeben werden und es anschliessend einen Fehler gibt. Jedoch funktioniert 
+dies bis jetzt noch nicht so wie ich es gerne möchte.
+
+## Reflexion
+Diese Lernperiode hat mir geholfen viele neue Sachen über C# zu lernen und bereits bekanntes richtig anzuwenden. Ich habe zum Beispiel gelernt wie und wann man bestimmte Loops anwendet, wie 
+man Arrays und Indexes nutzt, wie man if, else if und else anwendet und sogar wie man Sound in das Programm einfügen kann (.net Framework). Auch mit Funktionen habe ich mich in dieser Lernperiode 
+befasst. Ausserdem habe ich gelernt wie man Ascii-Art in der Konsole ausgeben kann. Ich habe herausgefunden, wie wichtig die Grundlagen sind um auch kopliziertere Programme zu schreiben und wie 
+viele Sachen man nur damit überhaupt schon programmieren kann. In der nächsten Lernperiode muss ich unbedingt meinen Variabeln sinnvollere Namen um den Überblick im Code nicht zu verlieren. 
+Es wäre auch Sinnvoll für mich, zukünftig auch Notizen in den Code einzufügen. Ich habe auch bemerkt, dass es mir viel mehr spass macht zu programmieren, wenn ich auch wirklich gefordert werde. 
+Also werde ich auch in der nächsten Lernperiode vermutlich versuchen, etwas eher kompliziertes zu programmieren.
