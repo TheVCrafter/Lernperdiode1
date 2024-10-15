@@ -59,6 +59,7 @@ dies bis jetzt noch nicht so wie ich es gerne möchte.
 Bei meinem Code handelt es sich wie bereits erwähnt um ein Hangmanspiel. Das Ziel ist es ein Wort herauszufinden indem man rät welche Buchstaben darin enthalten sein könnten. Wenn man einen Buchstaben rät welcher nicht in dem Wort enthalten ist, wird der Hangman erweitert. Die bereits geratenen Buchstaben werden übrigens angezeigt. Man kann ausserdem auch einfach das richtige Wort eingeben um schneller zu gewinnen. Gibt man jedoch ein flasches Wort ein wird auch der Hangman erweitert. Wenn der Hangman vervollständigt wird, verliert man das Spiel. Kann man das Wort jedoch vorher erraten, gewinnt man. Anschliessend ist es möglich das Spiel neu zu starten.
 
 <img src="ezgif.com-video-to-gif-converter.gif" />
+
 ## Reflexion
 Diese Lernperiode hat mir geholfen viele neue Sachen über C# zu lernen und bereits bekanntes richtig anzuwenden. Ich habe zum Beispiel gelernt wie und wann man bestimmte *Loops* anwendet, wie 
 man *Arrays und Indexes* nutzt, wie man if, else if und else anwendet und sogar wie man *Sound in das Programm einfügen* kann (.net Framework). Auch mit *Funktionen* habe ich mich in dieser Lernperiode 
