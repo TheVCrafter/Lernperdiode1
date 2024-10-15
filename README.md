@@ -55,6 +55,11 @@ ständig eine Fehler Meldung, weil mein Antivirus das Programm als Virus erkannt
 funktioniert. Anschliessend habe ich noch versucht eine Funktion einzufügen, welche erkennt wann mehrere Buchstaben eingegeben werden und es anschliessend einen Fehler gibt. Jedoch funktioniert 
 dies bis jetzt noch nicht so wie ich es gerne möchte.
 
+## fertiges Projekt
+Bei meinem Code handelt es sich wie bereits erwähnt um ein Hangmanspiel. Das Ziel ist es ein Wort herauszufinden indem man rät welche Buchstaben darin enthalten sein könnten. Wenn man einen Buchstaben rät welcher nicht in dem Wort enthalten ist, wird der Hangman erweitert. Die bereits geratenen Buchstaben werden übrigens angezeigt. Man kann ausserdem auch einfach das richtige Wort eingeben um schneller zu gewinnen. Gibt man jedoch ein flasches Wort ein wird auch der Hangman erweitert. Wenn der Hangman vervollständigt wird, verliert man das Spiel. Kann man das Wort jedoch vorher erraten, gewinnt man. Anschliessend ist es möglich das Spiel neu zu starten.
+
+
+
 ## Reflexion
 Diese Lernperiode hat mir geholfen viele neue Sachen über C# zu lernen und bereits bekanntes richtig anzuwenden. Ich habe zum Beispiel gelernt wie und wann man bestimmte *Loops* anwendet, wie 
 man *Arrays und Indexes* nutzt, wie man if, else if und else anwendet und sogar wie man *Sound in das Programm einfügen* kann (.net Framework). Auch mit *Funktionen* habe ich mich in dieser Lernperiode 
@@ -63,5 +68,3 @@ viele Sachen man nur damit überhaupt schon programmieren kann. In der nächsten
 Es wäre auch Sinnvoll für mich, zukünftig auch **Notizen in den Code einzufügen**. Ich habe auch bemerkt, dass es mir viel mehr spass macht zu programmieren, wenn ich auch wirklich gefordert werde. 
 Also werde ich auch in der nächsten Lernperiode vermutlich versuchen, etwas eher kompliziertes zu programmieren.
 
-## fertiges Projekt
-Bei meinem Code handelt es sich wie bereits erwähnt um ein Hangmanspiel. Das Ziel ist es ein Wort herauszufinden indem man rät welche Buchstaben darin enthalten sein könnten. Wenn man einen Buchstaben rät welcher nicht in dem Wort enthalten ist, wird der Hangman erweitert. Die bereits geratenen Buchstaben werden übrigens angezeigt. Man kann ausserdem auch einfach das richtige Wort eingeben um schneller zu gewinnen. Gibt man jedoch ein flasches Wort ein wird auch der Hangman erweitert. Wenn der Hangman vervollständigt wird, verliert man das Spiel. Kann man das Wort jedoch vorher erraten, gewinnt man. Anschliessend ist es möglich das Spiel neu zu starten.
