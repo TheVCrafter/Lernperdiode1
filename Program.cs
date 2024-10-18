@@ -21,33 +21,7 @@ namespace Hangman
             {
                 SoundPlayer Titlemusic = new SoundPlayer("Titlemusic.wav");
                 Titlemusic.PlayLooping();
-                bool isUserinputcorrect = false;
-                int Counter = 0;
-                while (!isUserinputcorrect)
-                {
-                    ColorWrite(Hangmanbanner, ConsoleColor.DarkGray, 1);
-                    if (Counter > 0)
-                    {
-                        ColorWrite("Wrong input, try again!", ConsoleColor.Red, 0);
-                    }
-                    else
-                    {
-                        Console.WriteLine();
-                    }
-                    ColorWrite("Press S to Start: ", ConsoleColor.White, 0);
-                    string input1 = Console.ReadLine();
-                    if (input1 == "S" || input1 == "s")
-                    {
-                        PlaySound("gamestart.wav");
-                        isUserinputcorrect = true;
-                    }
-                    else
-                    {
-                        Console.Clear();
-                        isUserinputcorrect = false;
-                    }
-                    Counter++;
-                }
+                GetUserInput(false);
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine();
@@ -337,11 +311,41 @@ namespace Hangman
             Console.ForegroundColor = color;
             // 3. Schreibe text
             Console.Write(text);
-            int leftcursor = Console.CursorLeft;
             int topcursor = Console.CursorTop;
-            Console.SetCursorPosition(leftcursor, topcursor + Position);
+            Console.CursorTop = topcursor + Position;
             // 4. Setze die Farbe auf current
             Console.ForegroundColor = current;
+        }
+        static void GetUserInput(bool isUserinputcorrect)
+        {
+            int Counter = 0;
+            while (!isUserinputcorrect)
+            {
+                ColorWrite(Hangmanbanner, ConsoleColor.DarkGray, 1);
+                if (Counter > 0)
+                {
+                    Console.CursorLeft = 1;
+                    ColorWrite("Wrong input, try again!", ConsoleColor.Red, 1);
+                }
+                else
+                {
+                    Console.WriteLine();
+                }
+                Console.CursorLeft = 0;
+                ColorWrite("Press S to Start: ", ConsoleColor.White, 0);
+                string input1 = Console.ReadLine();
+                if (input1 == "S" || input1 == "s")
+                {
+                    PlaySound("gamestart.wav");
+                    isUserinputcorrect = true;
+                }
+                else
+                {
+                    Console.Clear();
+                    isUserinputcorrect = false;
+                }
+                Counter++;
+            }
         }
     }
 
