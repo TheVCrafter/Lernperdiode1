@@ -8,6 +8,7 @@ using System.Xml.Schema;
 using System.IO;
 using System.Threading;
 using System.Media;
+using System.Runtime.CompilerServices;
 
 namespace Hangman
 {
@@ -21,46 +22,37 @@ namespace Hangman
                 SoundPlayer Titlemusic = new SoundPlayer("Titlemusic.wav");
                 Titlemusic.PlayLooping();
                 bool isUserinputcorrect = false;
-                bool inputright = true;
+                int Counter = 0;
                 while (!isUserinputcorrect)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine(Hangmanbanner);
-                    Console.WriteLine();
-                    if (!inputright)
+                    ColorWrite(Hangmanbanner, ConsoleColor.DarkGray, 1);
+                    if (Counter > 0)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Wrong Input! Try again!");
+                        ColorWrite("Wrong input, try again!", ConsoleColor.Red, 0);
                     }
                     else
                     {
                         Console.WriteLine();
                     }
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write("Press S to start: ");
+                    ColorWrite("Press S to Start: ", ConsoleColor.White, 0);
                     string input1 = Console.ReadLine();
-                    SoundPlayer Gamestart = new SoundPlayer("gamestart.wav");
                     if (input1 == "S" || input1 == "s")
                     {
-                        inputright = true;
-                        Gamestart.Play();
-                        break;
+                        PlaySound("gamestart.wav");
+                        isUserinputcorrect = true;
                     }
                     else
                     {
-
-                        Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.Clear();
-                        inputright = false;
+                        isUserinputcorrect = false;
                     }
+                    Counter++;
                 }
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine();
                 Console.WriteLine("Starting game...");
                 Thread.Sleep(2000);
-                SoundPlayer wrong = new SoundPlayer("wrong.wav");
-                SoundPlayer right = new SoundPlayer("right.wav");
                 Console.Clear();
                 string Word = GetRandomLine("wortliste.txt");
                 string WORD = Word.ToUpper();
@@ -76,8 +68,13 @@ namespace Hangman
                 while (!gamefinished)
                 {
                     guessedLetter = '\0';
+                    Console.SetCursorPosition(0, 4);
                     Console.Write("Enter a letter: ");
                     Hangman = GetHangmanArt(lives);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(Hangman);
+                    Console.SetCursorPosition(16, 4);
+                    Console.ForegroundColor= ConsoleColor.White;
                     string inputword = Console.ReadLine();
                     string inputletter = inputword.ToUpper();
                     if (inputletter.Length == 1)
@@ -99,7 +96,7 @@ namespace Hangman
                     {
                         if (Word[i] == char.ToLower(guessedLetter))
                         {
-                            right.Play();
+                            PlaySound("right.wav");
                             guessedWord[i] = char.ToUpper(guessedLetter);
                             letterFound = true;
                             Console.Clear();
@@ -110,7 +107,7 @@ namespace Hangman
                             guessedLetter = char.ToUpper(guessedLetter);
                             if (Word[i] == guessedLetter)
                             {
-                                right.Play();
+                                PlaySound("right.wav");
                                 guessedWord[i] = guessedLetter;
                                 letterFound = true;
                                 Console.Clear();
@@ -130,11 +127,19 @@ namespace Hangman
                     {
                         letterFound = true;
                         Letternotguessed = true;
-                        wrong.Play();
+                        PlaySound("wrong.wav");
                         Console.Clear();
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Wrong! This is not the correct Word!");
                         lives -= 1;
+                        if (lives == 0)
+                        {
+                            PlaySound("lost.wav");
+                            Console.Clear();
+                            ColorWrite(GameOver, ConsoleColor.DarkRed, 1);
+                            Console.WriteLine("The Word was: " + Word);
+                            break;
+                        }
                     }
                     if (!inputincorrect)
                     {
@@ -143,7 +148,7 @@ namespace Hangman
                     }
                     if (!letterFound)
                     {
-                        wrong.Play();
+                        PlaySound("wrong.wav");
                         Console.Clear();
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Wrong! The Word doesn't contain this Letter!");
@@ -151,21 +156,16 @@ namespace Hangman
                         Hangman = GetHangmanArt(lives);
                         if (lives == 0)
                         {
-                            SoundPlayer lost = new SoundPlayer("lost.wav");
-                            lost.Play();
+                            PlaySound("lost.wav");
                             Console.Clear();
-                            Console.ForegroundColor = ConsoleColor.DarkRed;
-                            Console.WriteLine(GameOver);
-                            Console.WriteLine();
-                            Console.ForegroundColor = ConsoleColor.White;
+                            ColorWrite(GameOver, ConsoleColor.DarkRed, 1);
                             Console.WriteLine("The Word was: " + Word);
-                            Console.Write("press R to restart or any other Letter to end the Game: ");
                             break;
                         }
                     }
                     if (!Letternotguessed)
                     {
-                        wrong.Play();
+                        PlaySound("wrong.wav");
                         Console.Clear();
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("You have already guessed this letter!");
@@ -173,63 +173,43 @@ namespace Hangman
                         Hangman = GetHangmanArt(lives);
                         if (lives == 0)
                         {
-                            SoundPlayer lost = new SoundPlayer("lost.wav");
-                            lost.Play();
+                            PlaySound("lost.wav");
                             Console.Clear();
-                            Console.ForegroundColor = ConsoleColor.DarkRed;
-                            Console.WriteLine(GameOver);
-                            Console.WriteLine();
-                            Console.ForegroundColor = ConsoleColor.White;
+                            ColorWrite(GameOver, ConsoleColor.DarkRed, 1);
                             Console.WriteLine("The Word was: " + Word);
-                            Console.Write("press R to restart or any other Letter to end the Game: ");
                             break;
                         }
                     }
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine(Hangman);
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine(new string(guessedWord));
+                    Console.WriteLine();
                     Console.WriteLine("Guessed Letters: " + guessedLetters);
                     if (new string(guessedWord) == WORD)
                     {
-                        SoundPlayer Win = new SoundPlayer("win.wav");
-                        Win.Play();
+                        PlaySound("win.wav");
                         gamefinished = true;
                         Console.Clear();
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine(Congratulations);
+                        ColorWrite(Congratulations, ConsoleColor.Green, 1);
                         Console.WriteLine();
-                        Console.ForegroundColor = ConsoleColor.White;
                         Console.WriteLine("You have guessed the Word");
-                        Console.Write("press R to restart or any other Letter to end the Game: ");
                         gamefinished = true;
                     }
                     if (inputword.ToUpper() == WORD)
                     {
-                        SoundPlayer Win = new SoundPlayer("win.wav");
-                        Win.Play();
+                        PlaySound("win.wav");
                         gamefinished = true;
                         Console.Clear();
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine(Congratulations);
+                        ColorWrite(Congratulations, ConsoleColor.Green, 1);
                         Console.WriteLine();
-                        Console.ForegroundColor = ConsoleColor.White;
                         Console.WriteLine("You have guessed the Word");
-                        Console.Write("press R to restart or any other Letter to end the Game: ");
                         gamefinished = true;
                     }
 
                 }
+                Console.ForegroundColor= ConsoleColor.White;
+                Console.Write("press R to restart or any other Letter to end the Game: ");
                 string input = Console.ReadLine();
-                if (input == "R")
-                {
-                    Console.Clear();
-                    Console.WriteLine("Restarting Game.......");
-                    Thread.Sleep(3000);
-                    Console.Clear();
-                    guessedLetters = "";
-                }
-                else if (input == "r")
+                if (input.Equals("R", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.Clear();
                     Console.WriteLine("Restarting Game.......");
@@ -343,6 +323,27 @@ namespace Hangman
  \_____\___/|_| |_|\__, |_|  \__,_|\__|\__,_|_|\__,_|\__|_|\___/|_| |_|___/
                     __/ |                                                  
                    |___/ ";
+        static void PlaySound(string soundFilePath)
+        {
+            SoundPlayer sound = new SoundPlayer(soundFilePath);
+            sound.Play();
+        }
+        static void ColorWrite(string text, ConsoleColor color, int Position)
+        {
+            // 1. Speichere die derzeitige Farbe
+            ConsoleColor current = Console.ForegroundColor;
+
+            // 2. Setze die Farbe auf color
+            Console.ForegroundColor = color;
+            // 3. Schreibe text
+            Console.Write(text);
+            int leftcursor = Console.CursorLeft;
+            int topcursor = Console.CursorTop;
+            Console.SetCursorPosition(leftcursor, topcursor + Position);
+            // 4. Setze die Farbe auf current
+            Console.ForegroundColor = current;
+        }
     }
 
 }
+
