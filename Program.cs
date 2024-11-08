@@ -1,217 +1,326 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Data;
 using System.Linq;
-using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Schema;
+using System.IO;
+using System.Threading;
+using System.Media;
+using System.Runtime.CompilerServices;
 
-namespace PacMan
+namespace Hangman
 {
     internal class Program
     {
-        static int ghostx = 45;
-        static int ghosty = 1;
         static void Main(string[] args)
         {
-            Console.CursorVisible = false;
-            int Counter = 0;
-            int previousY = 17;
-            int previousX = 45;
-            int xspeed = 0;
-            int yspeed = 0;
-            Thread.Sleep(50);
-            char PacmanMouthClosed = Convert.ToChar(Pacman[0]);
-            char PacmanMouthOpen = ' ';
-            Console.WriteLine(Map);
-            while (true)
+            bool isgamerestarting = true;
+            while (isgamerestarting)
             {
-                Console.OutputEncoding = Encoding.UTF8;
-                if (Console.KeyAvailable)
+                string Word = GetRandomLine("wortliste.txt");
+                string WORD = Word.ToUpper();
+                char[] guessedWord = new string('_', Word.Length).ToCharArray();
+                bool gamefinished = false;
+                int lives = 7;
+                string Hangman;
+                string guessedLetters = "";
+                bool inputincorrect = false;
+                char guessedLetter;
+                SoundPlayer Titlemusic = new SoundPlayer("Titlemusic.wav");
+                Titlemusic.PlayLooping();
+                GetUserInput(false);
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine();
+                Console.WriteLine("Starting game...");
+                Thread.Sleep(2000);
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(guessedWord);
+                while (!gamefinished)
                 {
-                    ConsoleKeyInfo keyInfo = Console.ReadKey(intercept: false);
-
-                    // Aktion basierend auf der gedrückten Taste
-                    switch (keyInfo.Key)
+                    guessedLetter = '\0';
+                    Console.SetCursorPosition(0, 4);
+                    Console.Write("Enter a letter: ");
+                    Hangman = GetHangmanArt(lives);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(Hangman);
+                    Console.SetCursorPosition(16, 4);
+                    Console.ForegroundColor = ConsoleColor.White;
+                    string inputword = Console.ReadLine();
+                    string inputletter = inputword.ToUpper();
+                    if (inputletter.Length == 1)
                     {
-                        case ConsoleKey.RightArrow:
-                            PacmanMouthOpen = Convert.ToChar(Pacman[1]);
-                            xspeed = 1;
-                            yspeed = 0;
-                            break;
-                        case ConsoleKey.LeftArrow:
-                            PacmanMouthOpen = Convert.ToChar(Pacman[2]);
-                            xspeed = -1;
-                            yspeed = 0;
-                            break;
-                        case ConsoleKey.UpArrow:
-                            PacmanMouthOpen = Convert.ToChar(Pacman[4]);
-                            xspeed = 0;
-                            yspeed = -1;
-                            break;
-                        case ConsoleKey.DownArrow:
-                            PacmanMouthOpen = Convert.ToChar(Pacman[3]);
-                            xspeed = 0;
-                            yspeed = 1;
-                            break;
+                        guessedLetter = Convert.ToChar(inputletter);
+                        inputincorrect = false;
                     }
+                    else if (inputword == WORD)
+                    {
+                        inputincorrect = false;
+                    }
+                    else
+                    {
+                        inputincorrect = true;
+                    }
+                    bool Letternotguessed = true;
+                    bool letterFound = false;
+                    for (int i = 0; i < Word.Length; i++)
+                    {
+                        if (Word[i] == char.ToLower(guessedLetter))
+                        {
+                            PlaySound("right.wav");
+                            guessedWord[i] = char.ToUpper(guessedLetter);
+                            letterFound = true;
+                            Console.Clear();
+                            Console.WriteLine();
+                        }
+                        else
+                        {
+                            guessedLetter = char.ToUpper(guessedLetter);
+                            if (Word[i] == guessedLetter)
+                            {
+                                PlaySound("right.wav");
+                                guessedWord[i] = guessedLetter;
+                                letterFound = true;
+                                Console.Clear();
+                                Console.WriteLine();
+                            }
+                        }
+                    }
+
+                    for (int i = 0; i < guessedLetters.Length; i++)
+                    {
+                        if (guessedLetters[i] == guessedLetter)
+                        {
+                            Letternotguessed = false;
+                        }
+                    }
+                    if (inputincorrect)
+                    {
+                        letterFound = true;
+                        Letternotguessed = true;
+                        lives -= 1;
+                        if (Mistake(lives, Word, "Wrong! This is not the correct Word!"))
+                        {
+                            Gamefinishedscreen(GameOver, ConsoleColor.DarkRed, "The Word was: " + Word, "lost.wav");
+                            break;
+                        }
+                    }
+                    if (!inputincorrect)
+                    {
+                        guessedLetters += char.ToUpper(guessedLetter);
+                        guessedLetters += ", ";
+                    }
+                    if (!letterFound)
+                    {
+                        lives -= 1;
+                        if (Mistake(lives, Word, "Wrong! The Word doesn't contain this Letter!"))
+                        {
+                            Gamefinishedscreen(GameOver, ConsoleColor.DarkRed, "The Word was: " + Word, "lost.wav");
+                            break;
+                        }
+                    }
+                    if (!Letternotguessed)
+                    {
+                        lives -= 1;
+                        if (Mistake(lives, Word, "You have already guessed this letter!"))
+                        {
+                            Gamefinishedscreen(GameOver, ConsoleColor.DarkRed, "The Word was: " + Word, "lost.wav");
+                            break;
+                        }
+                    }
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine(new string(guessedWord));
+                    Console.WriteLine();
+                    Console.WriteLine("Guessed Letters: " + guessedLetters);
+                    if (new string(guessedWord) == WORD)
+                    {
+                        Gamefinishedscreen(Congratulations, ConsoleColor.Green, "You have guessed the Word", "win.wav");
+                        gamefinished = true;
+                    }
+                    if (inputword.ToUpper() == WORD)
+                    {
+                        Gamefinishedscreen(Congratulations, ConsoleColor.Green, "You have guessed the Word", "win.wav");
+                        gamefinished = true;
+                    }
+
                 }
-                Counter++;
-                if (isThereAWall(previousX + xspeed, previousY + yspeed) == false)
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write("press R to restart or any other Letter to end the Game: ");
+                string input = Console.ReadLine();
+                if (input.Equals("R", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.SetCursorPosition(previousX, previousY);
-                    Console.Write(' ');
-                    Console.SetCursorPosition(previousX + xspeed, previousY + yspeed);
-                    previousX = previousX + xspeed;
-                    previousY = previousY + yspeed;
+                    Console.Clear();
+                    Console.WriteLine("Restarting Game.......");
+                    Thread.Sleep(3000);
+                    Console.Clear();
+                    guessedLetters = "";
                 }
                 else
                 {
-                    Console.SetCursorPosition(previousX, previousY);
+                    isgamerestarting = false;
                 }
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                if (Counter % 2 == 0)
-                {
-                    Console.Write(PacmanMouthClosed);
-                }
-                else if (Counter % 2 != 0)
-                {
-                    Console.Write(PacmanMouthOpen);
-                }
-                Ghosts(Counter, previousX, previousY);
-                Thread.Sleep(300);
             }
         }
-        static string[] Pacman = { "●", "⊏", "⊐", "⊓", "⊔" };
-    
-
-static string Map = @" -----------------------------------------------------------------------------------------------
-¦ ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·    ·                                              ¦
-¦   ¦¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¦   ¦¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¦   ¦
-¦   '------------------------------------------'   '----------------------------------------'   ¦
-¦ ·  ·  ·  ·  ·  ·  ·                            ·  ◯  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  · ¦
-¦¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¦   ¦¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¦   ¦¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¦   ¦
-¦                 ¦ · ¦                           ¦   ¦                                     ¦ · ¦
-¦-----------------'   '---------------------------'   ¦    ---------------------------------'   ¦
-¦ ·  ·  ·  ·  ·  ·  ·                                 ¦    ¦ ◯  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  · ¦
-¦   ¦¯¯¯¯¯¯¯¯¯¯¯¯¯¦   ¦¯¯¯¯¯¯¯¯¯¯¯¯¯¯¦   ¦¯¯¯¯¯¯¯¯¯¯¯¯     ¦   ¦¯¯¯¯¯¯¯¯¯¯¯¯¦   ¦¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¦
-¦ · ¦             ¦   '--------------'   ¦   -----------   ¦ · ¦            ¦ · ¦               ¦
-¦   ¦             ¦ ◯   ·  ·  ·  ·  ·  · ¦  ¦           ¦  ¦   ¦            ¦   '---------------¦ 
-¦ · ¦             ¦   ¦¯¯¯¯¯¯¯¯¯¯¯¯¯¯¦   ¦  ¦   ¦¯¯¯¦   ¦  ¦ · ¦            ¦ ·   ·  ·  ·  ·    ¦
-¦   '---¦         ¦ · ¦              ¦ · ¦  ¦   ¦   ¦   ¦  ¦   ¦------------'   ¦¯¯¯¯¯¯¯¯¯¯¯¦ · ¦
-¦ ·   · ¦    -----'   ¦              ¦   ¦  ¦   ¦   ¦   ¦  ¦ ·  ·  ·  ·  ·    · ¦           ¦   ¦
-¦¯¯¯¦   ¦   ¦ ·     · ¦              ¦ · ¦  ¦   ¦   ¦   ¦  ¦   ¦¯¯¯¯¯¯¯¯¯¯¯¯¦   ¦           ¦ · ¦
-¦   ¦ · ¦   ¦   ¦¯¯¯¯¯¦--------------'   '--'   '---'   '--'   '------------'   ¦     ¦-----'   ¦
-¦   ¦   '---'   ¦     ¦                ·  ·  ·  ·  ·  ·  ·   ·   ·  ·  ·  ·   · ¦     ¦   ·   · ¦
-¦   ¦ ·   ·   · ¦     ¦   ¦¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯'     ¦ · ¦¯¯¯¯¯¦
-¦   '¯¯¯¯¯¯¯¦   ¦     ¦   ¦                                                           ¦   ¦     ¦
-¦           ¦   '¯¯¯¯¯'   '-----------------------------------------------------------' · ¦     ¦
-¦           ¦ ·  ·  ·   ·    ·  ·  ·  ·  ◯  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·   ¦     ¦
- ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯";
-        static bool isThereAWall(int currentX, int currentY)
+        static string GetRandomLine(string filePath)
         {
-            bool TouchingWall = false;
-            string[] splitedmap = Map.Split('\n');
-            char[] MapSymbols = { '¦', '\'', '-', '¯' };
-            char[] CurrentLine = splitedmap[currentY].ToCharArray();
-            for (int i = 0; i < MapSymbols.Length; i++)
-            {
-                if (CurrentLine[currentX] == MapSymbols[i])
-                {
-                    TouchingWall = true;
-                }
-            }
-            return TouchingWall;
-
+            string[] lines = File.ReadAllLines(filePath);
+            Random rnd = new Random();
+            int randomIndex = rnd.Next(lines.Length);
+            return lines[randomIndex];
         }
-        static int previousdirection = 0;
-        static void Ghosts(int Counter, int pacmanx, int pacmany)
+        static void PlaySound(string soundFilePath)
         {
-            int previousX = ghostx;
-            int previousY = ghosty;
-            Random random = new Random();
-            Console.OutputEncoding = Encoding.UTF8;
-            string Ghost = "👻";
-
-            if (Counter == 1)
-            {
-                ghostx = 45;
-                ghosty = 1;
-                Console.SetCursorPosition(ghostx, ghosty);
-                Console.Write(Ghost);
-            }
-            bool xposwall = isThereAWall(ghostx + 2, ghosty);
-            bool yposwall = isThereAWall(ghostx, ghosty + 1);
-            bool xnegwall = isThereAWall(ghostx - 2, ghosty);
-            bool ynegwall = isThereAWall(ghostx, ghosty - 1);
-            bool bewegt = false;
-            if (Counter == 1)
-            {
-                int randomDirection = random.Next(2);
-                if (randomDirection == 0)
-                {
-                    randomDirection = -1;
-                }
-                ghostx += randomDirection;
-            }
-            else
-            {
-                switch (previousdirection)
-                {
-                    case 1: if (!xposwall && !bewegt) { if (!isThereAWall(ghostx, ghosty - 1) && Counter % 2 == 0) ghosty -= 1; else if (!isThereAWall(ghostx, ghosty + 1) && Counter % 2 == 0) ghosty += 1; else if (!isThereAWall(ghostx + 2, ghosty) && Counter % 2 == 0) ghostx += 1; bewegt = true; } break;
-                    case 2: if (!yposwall && !bewegt) { if (!isThereAWall(ghostx - 2, ghosty) && Counter % 2 == 0) ghostx -= 1; else if (!isThereAWall(ghostx + 2, ghosty) && Counter % 2 == 0) ghostx += 1; else if (!isThereAWall(ghostx, ghosty + 1) && Counter % 2 == 0) ghosty += 1; bewegt = true; } break;
-                    case 3: if (!xnegwall && !bewegt) { if (!isThereAWall(ghostx, ghosty - 1) && Counter % 2 == 0) ghosty -= 1; else if (!isThereAWall(ghostx, ghosty + 1) && Counter % 2 == 0) ghosty += 1; else if (!isThereAWall(ghostx - 2, ghosty) && Counter % 2 == 0) ghostx -= 1; bewegt = true; } break;
-                    case 4: if (!ynegwall && !bewegt) { if (!isThereAWall(ghostx - 2, ghosty) && Counter % 2 == 0) ghostx -= 1; else if (!isThereAWall(ghostx + 2, ghosty) && Counter % 2 == 0) ghostx += 1; else if (!isThereAWall(ghostx, ghosty - 1) && Counter % 2 == 0) ghosty -= 1; bewegt = true; } break;
-                }
-            }
-            if (!bewegt)
-            {
-                int randomDirection = random.Next(1, 5);
-
-                switch (randomDirection)
-                {
-                    case 1:
-                        if (!xposwall && !isThereAWall(ghostx + 2, ghosty))
-                            ghostx += 1;
-                        break;
-
-                    case 2:
-                        if (!yposwall && !isThereAWall(ghostx, ghosty + 1))
-                            ghosty += 1;
-                        break;
-
-                    case 3:
-                        if (!xnegwall && !isThereAWall(ghostx - 2, ghosty))
-                            ghostx -= 1;
-                        break;
-
-                    case 4:
-                        if (!ynegwall && !isThereAWall(ghostx, ghosty - 1))
-                            ghosty -= 1;
-                        break;
-                }
-            }
-
-            Console.SetCursorPosition(previousX, previousY);
-                Console.Write(previousSymbol(previousX, previousY));
-                Console.SetCursorPosition(ghostx, ghosty);
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write(Ghost);
-                if (ghostx > previousX) previousdirection = 1;
-                if (ghosty > previousY) previousdirection = 2;
-                if (ghostx < previousX) previousdirection = 3;
-                if (ghosty < previousY) previousdirection = 4;
+            SoundPlayer sound = new SoundPlayer(soundFilePath);
+            sound.Play();
         }
-            static char previousSymbol(int x, int y)
+        static void ColorWrite(string text, ConsoleColor color, int Position)
         {
-            string[] splitedmap = Map.Split('\n');
-            char[] CurrentLine = splitedmap[y].ToCharArray();
-            char previouschar = CurrentLine[x];
-            return previouschar;
+            ConsoleColor current = Console.ForegroundColor;
+            Console.CursorLeft = 0;
+            Console.ForegroundColor = color;
+            Console.Write(text);
+            int topcursor = Console.CursorTop;
+            Console.CursorTop = topcursor + Position;
+            Console.ForegroundColor = current;
         }
+        static void GetUserInput(bool isUserinputcorrect)
+        {
+            int Counter = 0;
+            while (!isUserinputcorrect)
+            {
+                ColorWrite(Hangmanbanner, ConsoleColor.DarkGray, 1);
+                if (Counter > 0)
+                {
+                    ColorWrite("Wrong input, try again!", ConsoleColor.Red, 1);
+                }
+                else
+                {
+                    Console.WriteLine();
+                }
+                Console.CursorLeft = 0;
+                ColorWrite("Press S to Start: ", ConsoleColor.White, 0);
+                string input1 = Console.ReadLine();
+                if (input1 == "S" || input1 == "s")
+                {
+                    PlaySound("gamestart.wav");
+                    isUserinputcorrect = true;
+                }
+                else
+                {
+                    Console.Clear();
+                    isUserinputcorrect = false;
+                }
+                Counter++;
+            }
+        }
+        static void Gamefinishedscreen(string GameoverorCongratulations, ConsoleColor color, string WriteLine, string soundfilePath)
+        {
+            PlaySound(soundfilePath);
+            Console.Clear();
+            ColorWrite(GameoverorCongratulations, color, 1);
+            Console.WriteLine();
+            Console.WriteLine(WriteLine);
+        }
+        static bool Mistake(int lives, string Word, string Message)
+        {
+            PlaySound("wrong.wav");
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(Message);
+            return (lives == 0);
+        }
+        static string GetHangmanArt(int lives)
+        {
+            string[] hangmanArt = {
+            @"",
+            @"
+  +---+
+  |   |
+      |
+      |
+      |
+      |
+=========",
+            @"
+  +---+
+  |   |
+  O   |
+      |
+      |
+      |
+=========",
+            @"
+  +---+
+  |   |
+  O   |
+  |   |
+      |
+      |
+=========",
+            @"
+  +---+
+  |   |
+  O   |
+ /|   |
+      |
+      |
+=========",
+            @"
+  +---+
+  |   |
+  O   |
+ /|\  |
+      |
+      |
+=========",
+            @"
+  +---+
+  |   |
+  O   |
+ /|\  |
+ /    |
+      |
+=========",
+            @"
+  +---+
+  |   |
+  O   |
+ /|\  |
+ / \  |
+      |
+========="
+        };
+            return hangmanArt[7 - lives];
+        }
+
+        static string Hangmanbanner = @" 
+ _    _                                         
+| |  | |                                        
+| |__| | __ _ _ __   __ _ _ __ ___   __ _ _ __  
+|  __  |/ _` | '_ \ / _` | '_ ` _ \ / _` | '_ \ 
+| |  | | (_| | | | | (_| | | | | | | (_| | | | |
+|_|  |_|\__,_|_| |_|\__, |_| |_| |_|\__,_|_| |_|
+                     __/ |                      
+                    |___/ ";
+        static string GameOver = @"  
+  _____                         ____                 
+ / ____|                       / __ \                
+| |  __  __ _ _ __ ___   ___  | |  | |_   _____ _ __ 
+| | |_ |/ _` | '_ ` _ \ / _ \ | |  | \ \ / / _ \ '__|
+| |__| | (_| | | | | | |  __/ | |__| |\ V /  __/ |   
+ \_____|\__,_|_| |_| |_|\___|  \____/  \_/ \___|_|";
+        static string Congratulations = @"
+  _____                            _         _       _   _                 
+ / ____|                          | |       | |     | | (_)                
+| |     ___  _ __   __ _ _ __ __ _| |_ _   _| | __ _| |_ _  ___  _ __  ___ 
+| |    / _ \| '_ \ / _` | '__/ _` | __| | | | |/ _` | __| |/ _ \| '_ \/ __|
+| |___| (_) | | | | (_| | | | (_| | |_| |_| | | (_| | |_| | (_) | | | \__ \
+ \_____\___/|_| |_|\__, |_|  \__,_|\__|\__,_|_|\__,_|\__|_|\___/|_| |_|___/
+                    __/ |                                                  
+                   |___/ ";
     }
-}
 
+}
